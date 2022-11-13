@@ -19,7 +19,7 @@ export const Modal = ({ largeImageUrl, onModalClose }) => {
 
   const handleBackdropClick = event => {
     if (event.currentTarget === event.target) {
-      this.props.onClose();
+      onModalClose();
     }
   };
 

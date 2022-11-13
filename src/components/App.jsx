@@ -63,7 +63,7 @@ export function App() {
        return (
         <div className={css.App}>          
           <Searchbar handleSearchSubmit={handleSearchSubmit} />
-          {showModal && <Modal onClose={toggleModal} largeImageUrl={largeImageURL}/>}   
+          {showModal && <Modal onModalClose={toggleModal} largeImageUrl={largeImageURL}/>}   
           {status === 'pending' && <Loader/>}  
           {images.length > 0 && <ImageGallery gallery={images} onModalOpen={onModalOpen} />}
           {status !== 'resolved' && images.length > 11 && <Button onClick={() => setPage(page + 1)} />}
