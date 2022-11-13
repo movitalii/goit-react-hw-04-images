@@ -6,8 +6,8 @@ export default function Searchbar() {
     const [imageName, setImageName] = useState('')
     
 
-   const handleNameChange = () => {
-        setImageName(imageName.toLowerCase() );
+   const handleNameChange = event => {
+        setImageName(event.currentTarget.value.toLowerCase());
     };
 
     const hendleSubmit = event => {
@@ -18,15 +18,13 @@ export default function Searchbar() {
             return
         }
         setImageName(imageName);
-        // this.setState({ imageName: '' });
     };
 
      
         return (
             <header className={css.searchbar}>
                 <form className={css.form} onSubmit={hendleSubmit}>
-                    <button type="submit" className={css.button}>
-                      {/* <span class={css.button__label}>Search</span> */}
+                    <button type="submit" className={css.button}>                     
                     </button>
 
                     <input
