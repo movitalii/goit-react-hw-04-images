@@ -47,8 +47,8 @@ export class App extends Component {
   componentDidUpdate(prevProps, prevState) {
     const { page } = this.state;
 
-    if (prevState.imageName !== this.state.imageName || prevState.page !== page ) {
-      this.fetchImages();
+    if (prevState.imageName !== this.state.imageName || prevState.page !== page) {
+     this.fetchImages();
     };
   };
   
@@ -56,8 +56,9 @@ export class App extends Component {
     this.setState(({ page }) => ({ page: page + 1 }));
   };
   
-  handleSearchSubmit = imageName => {
-    this.setState({ imageName, page: 1, images:[] });
+  handleSearchSubmit = imageName => {    
+    
+      this.setState({ imageName, page: 1, images:[] });
   };  
 
   // ============Modal methods============

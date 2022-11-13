@@ -1,31 +1,30 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import css from './Searchbar.module.css';
 import { toast } from 'react-toastify';
 
-export default class Searchbar extends Component {
-    state = {
-        imageName: '',
+export default function Searchbar() {
+    const [imageName, setImageName] = useState('')
+    
+
+   const handleNameChange = () => {
+        setImageName(imageName.toLowerCase() );
     };
 
-    handleNameChange = event => {
-        this.setState({ imageName: event.currentTarget.value.toLowerCase() });
-    };
-
-    hendleSubmit = event => {
+    const hendleSubmit = event => {
         event.preventDefault();        
 
-        if (this.state.imageName.trim() === '') {
+        if (imageName.trim() === '') {
             toast.warn('Input must not be empty!');
             return
         }
-        this.props.onSubmit(this.state.imageName);
+        setImageName(imageName);
         // this.setState({ imageName: '' });
     };
 
-    render() {
+     
         return (
             <header className={css.searchbar}>
-                <form className={css.form} onSubmit={this.hendleSubmit}>
+                <form className={css.form} onSubmit={hendleSubmit}>
                     <button type="submit" className={css.button}>
                       {/* <span class={css.button__label}>Search</span> */}
                     </button>
@@ -37,10 +36,10 @@ export default class Searchbar extends Component {
                         autoFocus
                         placeholder="Search images and photos"
                         // value={this.state.imageName}
-                        onChange={this.handleNameChange}
+                        onChange={handleNameChange}
                     />
                 </form>
             </header>
         )
-    }
+    
 }
