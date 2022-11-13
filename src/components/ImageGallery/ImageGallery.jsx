@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import ImageGalleryItem from "components/ImageGalleryItem/ImageGalleryItem"
+import { ImageGalleryItem } from "components/ImageGalleryItem/ImageGalleryItem"
 import css from './ImageGallery.module.css'
 
-export default function ImageGallery({ gallery, onModalOpen }) {
+export const ImageGallery = ({ gallery, onModalOpen }) => {
     return (
         <ul className={css.ImageGallery}>
             {gallery.map(({ id, webformatURL, largeImageURL }) => (

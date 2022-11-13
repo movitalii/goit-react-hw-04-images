@@ -1,96 +1,74 @@
-import { Component } from 'react';
+import {useState, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Searchbar from './Searchbar/Searchbar';
+import { Searchbar } from './Searchbar/Searchbar';
 import { Button } from 'components/Button/Button';
 import { ApiFetch } from 'components/API/Api'
-import ImageGallery from 'components/ImageGallery/ImageGallery';
-import Loader from 'components/Loader/Loader';
-import Modal from 'components/Modal/Modal';
+import { ImageGallery } from 'components/ImageGallery/ImageGallery';
+import { Loader } from 'components/Loader/Loader';
+import { Modal } from 'components/Modal/Modal';
 import { toast } from 'react-toastify';
 import css from './App.module.css';
 
-export class App extends Component {
-  state = {
-    images: [],
-    error: null,
-    status: 'idle',
-    showModal: false,
-    imageName: '',  
-    page: 1,
-    largeImageURL: '',
-  }; 
+export function App() {
+  const [images, setImages] = useState([]);
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState('idle');
+  const [showModal, setShowModal] = useState(false);
+  const [imageName, setImageName] = useState('')
+  const [page, setPage] = useState(1)
+  const [largeImageURL, setLargeImageURL] = useState('')  
+   
+  useEffect(() => {    
+    if (!imageName) {
+      return;
+    }
 
-  fetchImages() {
-    this.setState({ status: 'pending' });
+    setStatus('pending');
 
-            ApiFetch(this.state.imageName, this.state.page)
-                .then(response => { 
-                    if (response.ok) {
-                        return response.json();
-                  }                   
-                    return toast.error(`No pictures found with name ${this.state.imageName}`);
-                })
-                .then(data => {
-                  const images = data.hits;
-                  if (images.length === 0) {
-                    this.setState({ images, status: 'idle' })
-                    return toast.error(`No pictures found with name ${this.state.imageName}`);
-                  }
-                  
-                  this.setState(prevState => ({ images: [...prevState.images, ...images], status: 'idle' }))
-                  })
-                .catch(error => this.setState({ error }));
-        }
+      ApiFetch(imageName, page)
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          return toast.error(`No pictures found with name ${imageName}`);
+        })
+        .then(data => {
+          if (data.hits.length === 0) {
+            setStatus('idle')
+            return toast.error(`No pictures found with name ${imageName}`);
+          }
+          setImages(prev => [...prev, ...data.hits]);
+          setStatus('idle')
+        })
+        .catch(error => setError(error));
+  }, [imageName, page]);
+
+  const handleSearchSubmit = imageName => {  
+      setImageName(imageName);
+      setPage(1);
+      setImages([]);
+  }
   
 
-  componentDidUpdate(prevProps, prevState) {
-    const { page } = this.state;
-
-    if (prevState.imageName !== this.state.imageName || prevState.page !== page) {
-     this.fetchImages();
-    };
+  const onModalOpen = largeImageURL => {
+    toggleModal();
+    setLargeImageURL(largeImageURL);  
   };
   
-  nextPageHandler = () => {
-    this.setState(({ page }) => ({ page: page + 1 }));
-  };
-  
-  handleSearchSubmit = imageName => {    
-    
-      this.setState({ imageName, page: 1, images:[] });
-  };  
-
-  // ============Modal methods============
-
-  onModalOpen = largeImageURL => {
-    this.toggleModal();
-    this.setState({
-      largeImageURL: largeImageURL,
-    });
-  };
-  
-  toggleModal = () => {
-    this.setState(({ showModal }) => ({
-      showModal: !showModal,
-    }));
-  };
-
-  // =========Render=========
-
-    render() {
-      const { images, error, status, showModal, largeImageURL } = this.state;
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };      
       
        return (
         <div className={css.App}>          
-          <Searchbar onSubmit={this.handleSearchSubmit} />
-          {showModal && <Modal onClose={this.toggleModal} largeImageUrl={largeImageURL}/>}   
+          <Searchbar handleSearchSubmit={handleSearchSubmit} />
+          {showModal && <Modal onClose={toggleModal} largeImageUrl={largeImageURL}/>}   
           {status === 'pending' && <Loader/>}  
-          {images.length > 0 && <ImageGallery gallery={images} onModalOpen={this.onModalOpen} />}
-          {status !== 'resolved' && images.length > 11 && <Button onClick={this.nextPageHandler} />}
+          {images.length > 0 && <ImageGallery gallery={images} onModalOpen={onModalOpen} />}
+          {status !== 'resolved' && images.length > 11 && <Button onClick={() => setPage(page + 1)} />}
           {error && toast.error(`Oops something went wrong. ${error.message}`)}
           <ToastContainer autoClose={3000} />
         </div> 
-        );           
+        );         
   }
-}

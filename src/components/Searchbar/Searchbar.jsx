@@ -2,11 +2,11 @@ import { useState } from 'react';
 import css from './Searchbar.module.css';
 import { toast } from 'react-toastify';
 
-export default function Searchbar() {
+export const Searchbar = ({handleSearchSubmit}) => {
     const [imageName, setImageName] = useState('')
     
 
-   const handleNameChange = event => {
+    const handleNameChange = event => {
         setImageName(event.currentTarget.value.toLowerCase());
     };
 
@@ -17,7 +17,7 @@ export default function Searchbar() {
             toast.warn('Input must not be empty!');
             return
         }
-        setImageName(imageName);
+        handleSearchSubmit(imageName);
     };
 
      
